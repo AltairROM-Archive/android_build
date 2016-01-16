@@ -144,7 +144,7 @@ $(INSTALLED_BUILD_PROP_TARGET): $(BUILDINFO_SH) $(INTERNAL_BUILD_ID_MAKEFILE)
 	@mkdir -p $(dir $@)
 	$(hide) TARGET_BUILD_TYPE="$(TARGET_BUILD_VARIANT)" \
 			TARGET_DEVICE="$(TARGET_DEVICE)" \
-			CM_DEVICE="$(TARGET_DEVICE)" \
+			ALTAIR_DEVICE="$(TARGET_DEVICE)" \
 			PRODUCT_NAME="$(TARGET_PRODUCT)" \
 			PRODUCT_BRAND="$(PRODUCT_BRAND)" \
 			PRODUCT_DEFAULT_LANGUAGE="$(call default-locale-language,$(PRODUCT_LOCALES))" \
@@ -1325,7 +1325,7 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(OTATOOLS)
 
 .PHONY: otapackage
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
-bacon: otapackage
+altair: otapackage
 
 # -----------------------------------------------------------------
 # The update package
@@ -1369,14 +1369,14 @@ $(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(OTATOOLS)
 
 .PHONY: updatepackage
 updatepackage: $(INTERNAL_UPDATE_PACKAGE_TARGET)
-.PHONY: otapackage bacon
+.PHONY: otapackage altair
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
-bacon: otapackage
+altair: otapackage
 
 ifeq ($(TARGET_CUSTOM_RELEASETOOL),)
 	$(hide) \
 	WANT_SQUASHFS=$(WANT_SQUASHFS) \
-	./vendor/cyanogen/tools/squisher
+	./vendor/altair/tools/squisher
 else
 	$(hide) \
 	WANT_SQUASHFS=$(WANT_SQUASHFS) \

@@ -559,7 +559,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   AppendAssertions(script, target_zip)
   device_specific.IncrementalOTA_Assertions()
 
-  script.Print("Verifying current system...")
+  script.Print("[*] Verifying current system...")
 
   script.ShowProgress(0.1, 0)
   total_verify_size = float(sum([i[2].size for i in patch_list]) + 1)
@@ -597,10 +597,10 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   script.Comment("---- start making changes here ----")
 
   if OPTIONS.wipe_user_data:
-    script.Print("Erasing user data...")
+    script.Print("[*] Erasing user data...")
     script.FormatPartition("/data")
 
-  script.Print("Removing unneeded files...")
+  script.Print("[*] Removing unneeded files...")
   script.DeleteFiles(["/"+i[0] for i in verbatim_targets] +
                      ["/"+i for i in sorted(source_data)
                             if i not in target_data] +
@@ -612,7 +612,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     total_patch_size += target_boot.size
   so_far = 0
 
-  script.Print("Patching system files...")
+  script.Print("[*] Patching system files...")
   for fn, tf, sf, size, _ in patch_list:
     script.ApplyPatch("/"+fn, "-", tf.size, tf.sha1, sf.sha1, "patch/"+fn+".p")
     so_far += tf.size
@@ -622,7 +622,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     # Produce the boot image by applying a patch to the current
     # contents of the boot partition, and write it back to the
     # partition.
-    script.Print("Patching boot image...")
+    script.Print("[*] Patching boot image...")
     script.ApplyPatch("%s:%s:%d:%s:%d:%s"
                       % (boot_type, boot_device,
                          source_boot.size, source_boot.sha1,
@@ -679,14 +679,14 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   script.DeleteFiles(to_delete)
 
   if verbatim_targets:
-    script.Print("Unpacking new files...")
+    script.Print("[*] Unpacking new files...")
     script.UnpackPackageDir("system", "/system")
 
   if updating_recovery:
-    script.Print("Unpacking new recovery...")
+    script.Print("[*] Unpacking new recovery...")
     script.UnpackPackageDir("recovery", "/system")
 
-  script.Print("Symlinks and permissions...")
+  script.Print("[*] Symlinks and permissions...")
 
   # Create all the symlinks that don't already exist, or point to
   # somewhere different than what we want.  Delete each symlink before

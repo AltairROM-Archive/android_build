@@ -59,12 +59,12 @@ function check_product()
         return
     fi
 
-    if (echo -n $1 | grep -q -e "^cyanogen_") ; then
-       CM_BUILD=$(echo -n $1 | sed -e 's/^cyanogen_//g')
+    if (echo -n $1 | grep -q -e "^altair_") ; then
+       ALTAIR_BUILD=$(echo -n $1 | sed -e 's/^altair_//g')
     else
-       CM_BUILD=
+       ALTAIR_BUILD=
     fi
-    export CM_BUILD
+    export ALTAIR_BUILD
 
     CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
         TARGET_PRODUCT=$1 TARGET_BUILD_VARIANT= \
@@ -463,7 +463,7 @@ function print_lunch_menu()
     	echo "  (ohai, koush!)"
     fi
     echo
-    if [ "z${CM_DEVICES_ONLY}" != "z" ]; then
+    if [ "z${ALTAIR_DEVICES_ONLY}" != "z" ]; then
        echo "Breakfast menu... pick a combo:"
     else
        echo "Lunch menu... pick a combo:"
@@ -477,7 +477,7 @@ function print_lunch_menu()
         i=$(($i+1))
     done
 
-    if [ "z${CM_DEVICES_ONLY}" != "z" ]; then
+    if [ "z${ALTAIR_DEVICES_ONLY}" != "z" ]; then
        echo "... and don't forget the bacon!"
     fi
 
@@ -488,7 +488,7 @@ function brunch()
 {
     breakfast $*
     if [ $? -eq 0 ]; then
-        mka bacon
+        mka altair
     else
         echo "No such item in brunch menu. Try 'breakfast'"
         return 1
@@ -499,10 +499,10 @@ function brunch()
 function breakfast()
 {
     target=$1
-    CM_DEVICES_ONLY="true"
+    ALTAIR_DEVICES_ONLY="true"
     unset LUNCH_MENU_CHOICES
     add_lunch_combo full-eng
-    for f in `/bin/ls vendor/cyanogen/vendorsetup.sh vendor/cyanogen/build/vendorsetup.sh 2> /dev/null`
+    for f in `/bin/ls vendor/altair/vendorsetup.sh vendor/altair/build/vendorsetup.sh 2> /dev/null`
         do
             echo "including $f"
             . $f
@@ -519,7 +519,7 @@ function breakfast()
             lunch $target
         else
             # This is probably just the CM model name
-            lunch cyanogen_$target-eng
+            lunch altair_$target-eng
         fi
     fi
     return $?
@@ -654,8 +654,8 @@ function tapas()
 function eat()
 {
     if [ "$OUT" ] ; then
-        MODVERSION=`sed -n -e'/ro\.modversion/s/^.*CyanogenMod-//p' $OUT/system/build.prop`
-        ZIPFILE=cm-$MODVERSION.zip
+        MODVERSION=`sed -n -e'/ro\.modversion/s/^.*Altair-//p' $OUT/system/build.prop`
+        ZIPFILE=Altair-$MODVERSION.zip
         ZIPPATH=$OUT/$ZIPFILE
         if [ ! -f $ZIPPATH ] ; then
             echo "Nothing to eat"
