@@ -412,6 +412,11 @@ def WriteFullOTAPackage(input_zip, output_zip):
     script.ShowProgress(0.2, 10)
     script.RunBackup("restore")
 
+  common.ZipWriteStr(output_zip, "supersu/supersu.zip",
+  ""+input_zip.read("SYSTEM/addon.d/UPDATE-SuperSU.zip"))
+  script.Mount("/system")
+  script.FlashSuperSU()
+
   script.RunModelidCfg()
 
   script.RunVerifyCachePartitionSize()
