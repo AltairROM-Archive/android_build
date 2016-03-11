@@ -19,7 +19,6 @@ PRODUCT_PROPERTY_OVERRIDES :=
 PRODUCT_PACKAGES := \
 	SystemUI \
 	AccountAndSyncSettings \
-	Camera \
 	Calculator \
 	DeskClock \
 	Development \
@@ -28,7 +27,6 @@ PRODUCT_PACKAGES := \
 	Fallback \
 	Gallery \
 	GPSEnable \
-	Launcher2 \
 	Protips \
 	Music \
 	Mms \
