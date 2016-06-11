@@ -218,7 +218,7 @@ endif
 	$(hide) TARGET_BUILD_TYPE="$(TARGET_BUILD_VARIANT)" \
 			TARGET_BUILD_FLAVOR="$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)" \
 			TARGET_DEVICE="$(TARGET_VENDOR_DEVICE_NAME)" \
-			CM_DEVICE="$(TARGET_DEVICE)" \
+			ALTAIR_DEVICE="$(TARGET_DEVICE)" \
 			PRODUCT_NAME="$(TARGET_VENDOR_PRODUCT_NAME)" \
 			PRODUCT_BRAND="$(PRODUCT_BRAND)" \
 			PRODUCT_DEFAULT_LOCALE="$(call get-default-product-locale,$(PRODUCT_LOCALES))" \
@@ -1884,7 +1884,7 @@ endif
 ifeq ($(WITH_GMS),true)
     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := false
 else
-ifneq ($(CM_BUILD),)
+ifneq ($(ALTAIR_BUILD),)
     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := true
 else
     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := false
@@ -1922,14 +1922,27 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 	   $(if $(OEM_OTA_CONFIG), -o $(OEM_OTA_CONFIG)) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
-CM_TARGET_PACKAGE := $(PRODUCT_OUT)/cm-$(CM_VERSION).zip
+ALTAIR_TARGET_PACKAGE := $(PRODUCT_OUT)/$(ALTAIR_VERSION).zip
 
-.PHONY: otapackage bacon
+.PHONY: otapackage altair
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
-bacon: otapackage
-	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(CM_TARGET_PACKAGE)
-	$(hide) $(MD5SUM) $(CM_TARGET_PACKAGE) > $(CM_TARGET_PACKAGE).md5sum
-	@echo -e ${CL_CYN}"Package Complete: $(CM_TARGET_PACKAGE)"${CL_RST}
+altair: otapackage
+	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(ALTAIR_TARGET_PACKAGE)
+	$(hide) $(MD5SUM) $(ALTAIR_TARGET_PACKAGE) > $(ALTAIR_TARGET_PACKAGE).md5sum
+	@echo ""
+	@echo -e ${CL_YLW}"═════════════════════════════════════════════════════════"${CL_RST}
+	@echo -e ${CL_GRN}" █████╗ ██╗  ████████╗ █████╗ ██╗██████╗     ██╗   ██╗██╗"${CL_RST}
+	@echo -e ${CL_GRN}"██╔══██╗██║  ╚══██╔══╝██╔══██╗██║██╔══██╗    ██║   ██║██║"${CL_RST}
+	@echo -e ${CL_GRN}"███████║██║     ██║   ███████║██║██████╔╝    ██║   ██║██║"${CL_RST}
+	@echo -e ${CL_GRN}"██╔══██║██║     ██║   ██╔══██║██║██╔══██╗    ╚██╗ ██╔╝██║"${CL_RST}
+	@echo -e ${CL_GRN}"██║  ██║███████╗██║   ██║  ██║██║██║  ██║     ╚████╔╝ ██║"${CL_RST}
+	@echo -e ${CL_GRN}"╚═╝  ╚═╝╚══════╝╚═╝   ╚═╝  ╚═╝╚═╝╚═╝  ╚═╝      ╚═══╝  ╚═╝"${CL_RST}
+	@echo -e ${CL_YLW}"═════════════════════════════════════════════════════════"${CL_RST}
+	@echo -e ${CL_CYN}"Path:"${CL_MAG} $(PRODUCT_OUT)${CL_RST}
+	@echo -e ${CL_CYN}"File:"${CL_MAG} $(ALTAIR_VERSION)${CL_RST}
+	@echo -e ${CL_CYN}" MD5:"${CL_MAG}" `cat $(ALTAIR_TARGET_PACKAGE).md5sum | cut -d ' ' -f 1`"${CL_RST}
+	@echo -e ${CL_CYN}"Size:"${CL_MAG}" `ls -lah $(ALTAIR_TARGET_PACKAGE) | cut -d ' ' -f 5`"${CL_RST}
+	@echo -e ${CL_YLW}"═════════════════════════════════════════════════════════"${CL_RST}
 
 # -----------------------------------------------------------------
 # The factory package

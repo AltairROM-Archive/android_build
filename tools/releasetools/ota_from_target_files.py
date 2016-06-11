@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #
 # Copyright (C) 2008 The Android Open Source Project
+# Copyright (C) 2016 The Altair ROM Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -614,7 +615,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 """ % bcb_dev)
 
   # Dump fingerprints
-  script.Print("Target: %s" % CalculateFingerprint(
+  script.Print("[*] Target: %s" % CalculateFingerprint(
       oem_props, oem_dict, OPTIONS.info_dict))
 
   script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
@@ -646,6 +647,21 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.Unmount("/data")
     script.AppendExtra("endif;")
 
+    script.Print(" ");
+    script.Print(" ");
+    script.Print("******************************************");
+    script.Print("* Altair ROM");
+    script.Print("******************************************");
+    script.Print("* Created By Martin J. Pollard");
+    script.Print("******************************************");
+
+    builddate = GetBuildProp("ro.build.date", OPTIONS.info_dict)
+    script.Print("* Build date: %s"%(builddate));
+#   device = GetBuildProp("ro.product.device", OPTIONS.info_dict)
+#   model = GetBuildProp("ro.product.model", OPTIONS.info_dict)
+#   script.Print("* Device: %s (%s)"%(model, device));
+    script.Print("******************************************");
+
   if "selinux_fc" in OPTIONS.info_dict:
     WritePolicyConfig(OPTIONS.info_dict["selinux_fc"], output_zip)
 
@@ -654,22 +670,29 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   system_items = ItemSet("system", "META/filesystem_config.txt")
   script.ShowProgress(system_progress, 0)
 
+  script.Print("[*] Following operation takes time, please wait...")
   if block_based:
     # Full OTA is done as an "incremental" against an empty source
     # image.  This has the effect of writing new data from the package
     # to the entire partition, but lets us reuse the updater code that
     # writes incrementals to do it.
+    script.Print("[*] Installation is block based")
     system_tgt = GetImage("system", OPTIONS.input_tmp, OPTIONS.info_dict)
     system_tgt.ResetFileMap()
     system_diff = common.BlockDifference("system", system_tgt, src=None)
     system_diff.WriteScript(script, output_zip)
   else:
+    script.Print("[*] Installation is file based")
+    script.Print("[*] Formatting /system...")
     script.FormatPartition("/system")
+    script.Print("[*] Mounting /system...")
     script.Mount("/system", recovery_mount_options)
     if not has_recovery_patch:
       script.UnpackPackageDir("recovery", "/system")
+    script.Print("[*] Installing /system...")
     script.UnpackPackageDir("system", "/system")
 
+    script.Print("[*] Symlinking...")
     symlinks = CopyPartitionFiles(system_items, input_zip, output_zip)
     script.MakeSymlinks(symlinks)
 
@@ -712,6 +735,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   device_specific.FullOTA_PostValidate()
 
+  script.Print("[*] Restoring backup...")
   if OPTIONS.backuptool:
     script.ShowProgress(0.02, 10)
     if block_based:
@@ -936,12 +960,12 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
 """ % bcb_dev)
 
   # Dump fingerprints
-  script.Print("Source: %s" % CalculateFingerprint(
+  script.Print("[*] Source: %s" % CalculateFingerprint(
       oem_props, oem_dict, OPTIONS.source_info_dict))
-  script.Print("Target: %s" % CalculateFingerprint(
+  script.Print("[*] Target: %s" % CalculateFingerprint(
       oem_props, oem_dict, OPTIONS.target_info_dict))
 
-  script.Print("Verifying current system...")
+  script.Print("[*] Verifying current system...")
 
   device_specific.IncrementalOTA_VerifyBegin()
 
@@ -1017,14 +1041,14 @@ else
     if updating_boot:
       if include_full_boot:
         print("boot image changed; including full.")
-        script.Print("Installing boot image...")
+        script.Print("[*] Installing boot image...")
         script.WriteRawImage("/boot", "boot.img")
       else:
         # Produce the boot image by applying a patch to the current
         # contents of the boot partition, and write it back to the
         # partition.
         print("boot image changed; including patch.")
-        script.Print("Patching boot image...")
+        script.Print("[*] Patching boot image...")
         script.ShowProgress(0.1, 10)
         script.ApplyPatch("%s:%s:%d:%s:%d:%s"
                           % (boot_type, boot_device,
@@ -1043,7 +1067,7 @@ else
     script.AppendExtra(OPTIONS.extra_script)
 
   if OPTIONS.wipe_user_data:
-    script.Print("Erasing user data...")
+    script.Print("[*] Erasing user data...")
     script.FormatPartition("/data")
 
   if OPTIONS.two_step:
@@ -1181,7 +1205,7 @@ class FileDifference(object):
 
   def EmitRenames(self, script):
     if len(self.renames) > 0:
-      script.Print("Renaming files...")
+      script.Print("[*] Renaming files...")
       for src, tgt in self.renames.items():
         print("Renaming " + src + " to " + tgt.name)
         script.RenameFile(src, tgt.name)
@@ -1328,10 +1352,10 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
 """ % bcb_dev)
 
   # Dump fingerprints
-  script.Print("Source: %s" % source_fp)
-  script.Print("Target: %s" % target_fp)
+  script.Print("[*] Source: %s" % source_fp)
+  script.Print("[*] Target: %s" % target_fp)
 
-  script.Print("Verifying current system...")
+  script.Print("[*] Verifying current system...")
 
   device_specific.IncrementalOTA_VerifyBegin()
 
@@ -1385,7 +1409,7 @@ else
     script.WriteRawImage("/boot", "boot.img")
     print("writing full boot image (forced by two-step mode)")
 
-  script.Print("Removing unneeded files...")
+  script.Print("[*] Removing unneeded files...")
   system_diff.RemoveUnneededFiles(script, ("/system/recovery.img",))
   if vendor_diff:
     vendor_diff.RemoveUnneededFiles(script)
@@ -1397,10 +1421,10 @@ else
   if updating_boot:
     total_patch_size += target_boot.size
 
-  script.Print("Patching system files...")
+  script.Print("[*] Patching system files...")
   so_far = system_diff.EmitPatches(script, total_patch_size, 0)
   if vendor_diff:
-    script.Print("Patching vendor files...")
+    script.Print("[*] Patching vendor files...")
     so_far = vendor_diff.EmitPatches(script, total_patch_size, so_far)
 
   if not OPTIONS.two_step:
@@ -1408,7 +1432,7 @@ else
       # Produce the boot image by applying a patch to the current
       # contents of the boot partition, and write it back to the
       # partition.
-      script.Print("Patching boot image...")
+      script.Print("[*] Patching boot image...")
       script.ApplyPatch("%s:%s:%d:%s:%d:%s"
                         % (boot_type, boot_device,
                            source_boot.size, source_boot.sha1,
@@ -1506,21 +1530,21 @@ else
   script.DeleteFilesIfNotMatching(may_delete)
 
   if system_diff.verbatim_targets:
-    script.Print("Unpacking new system files...")
+    script.Print("[*] Unpacking new system files...")
     script.UnpackPackageDir("system", "/system")
   if vendor_diff and vendor_diff.verbatim_targets:
-    script.Print("Unpacking new vendor files...")
+    script.Print("[*] Unpacking new vendor files...")
     script.UnpackPackageDir("vendor", "/vendor")
 
   if updating_recovery and not target_has_recovery_patch:
-    script.Print("Unpacking new recovery...")
+    script.Print("[*] Unpacking new recovery...")
     script.UnpackPackageDir("recovery", "/system")
 
   system_diff.EmitRenames(script)
   if vendor_diff:
     vendor_diff.EmitRenames(script)
 
-  script.Print("Symlinks and permissions...")
+  script.Print("[*] Symlinks and permissions...")
 
   # Create all the symlinks that don't already exist, or point to
   # somewhere different than what we want.  Delete each symlink before
@@ -1548,11 +1572,11 @@ else
   # Patch the build.prop file last, so if something fails but the
   # device can still come up, it appears to be the old build and will
   # get set the OTA package again to retry.
-  script.Print("Patching remaining system files...")
+  script.Print("[*] Patching remaining system files...")
   system_diff.EmitDeferredPatches(script)
 
   if OPTIONS.wipe_user_data:
-    script.Print("Erasing user data...")
+    script.Print("[*] Erasing user data...")
     script.FormatPartition("/data")
 
   if OPTIONS.two_step:
@@ -1563,13 +1587,13 @@ endif;
 """ % bcb_dev)
 
   if OPTIONS.verify and system_diff:
-    script.Print("Remounting and verifying system partition files...")
+    script.Print("[*] Remounting and verifying system partition files...")
     script.Unmount("/system")
     script.Mount("/system")
     system_diff.EmitExplicitTargetVerification(script)
 
   if OPTIONS.verify and vendor_diff:
-    script.Print("Remounting and verifying vendor partition files...")
+    script.Print("[*] Remounting and verifying vendor partition files...")
     script.Unmount("/vendor")
     script.Mount("/vendor")
     vendor_diff.EmitExplicitTargetVerification(script)
