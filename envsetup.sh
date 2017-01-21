@@ -85,10 +85,22 @@ function check_product()
     fi
 
     if (echo -n $1 | grep -q -e "^altair_") ; then
-       ALTAIR_BUILD=$(echo -n $1 | sed -e 's/^altair_//g')
-       export BUILD_NUMBER=$((date +%s%N ; echo $ALTAIR_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10)
+        ALTAIR_BUILD=$(echo -n $1 | sed -e 's/^altair_//g')
+        export BUILD_NUMBER=$((date +%s%N ; echo $ALTAIR_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10)
     else
-       ALTAIR_BUILD=
+        # Fall back to lineage_<product>
+        if (echo -n $1 | grep -q -e "^lineage_") ; then
+            ALTAIR_BUILD=$(echo -n $1 | sed -e 's/^lineage_//g')
+            export BUILD_NUMBER=$((date +%s%N ; echo $ALTAIR_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10)
+        else
+            # Fall back to cm_<product>
+            if (echo -n $1 | grep -q -e "^cm_") ; then
+                ALTAIR_BUILD=$(echo -n $1 | sed -e 's/^cm_//g')
+                export BUILD_NUMBER=$((date +%s%N ; echo $ALTAIR_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10)
+            else
+                ALTAIR_BUILD=
+            fi
+        fi
     fi
     export ALTAIR_BUILD
 
@@ -568,11 +580,21 @@ function breakfast()
             # A buildtype was specified, assume a full device name
             lunch $target
         else
-            # This is probably just the CM model name
+            # This is probably just the Lineage model name
             if [ -z "$variant" ]; then
                 variant="userdebug"
             fi
             lunch altair_$target-$variant
+            if [ $? -ne 0 ]; then
+                # try Lineage
+                echo "** Warning: '$target' is using Lineage-based makefiles. This will be deprecated in the next major release."
+                lunch lineage_$target-$variant
+                if [ $? -ne 0 ]; then
+                    # try CM
+                    echo "** Warning: '$target' is using CM-based makefiles. This will be deprecated in the next major release."
+                    lunch cm_$target-$variant
+                fi
+            fi
         fi
     fi
     return $?
@@ -1732,7 +1754,7 @@ function cafremote()
     then
         PFX="platform/"
     fi
-    git remote add caf git://codeaurora.org/$PFX$PROJECT
+    git remote add caf https://source.codeaurora.org/quic/la/$PFX$PROJECT
     echo "Remote 'caf' created"
 }
 
