@@ -1,5 +1,15 @@
 # Put some miscellaneous rules here
 
+ifneq ($(BUILD_WITH_COLORS),0)
+  CL_RED="\033[31m"
+  CL_GRN="\033[32m"
+  CL_YLW="\033[33m"
+  CL_BLU="\033[34m"
+  CL_MAG="\033[35m"
+  CL_CYN="\033[36m"
+  CL_RST="\033[0m"
+endif
+
 # HACK: clear LOCAL_PATH from including last build target before calling
 # intermedites-dir-for
 LOCAL_PATH := $(BUILD_SYSTEM)
@@ -2234,7 +2244,7 @@ altair: otapackage
 	@echo " "
 	@echo " "
 	@echo -e ${CL_YLW}"═════════════════════════════════════════════════════════════════════════"${CL_RST}
-	@echo -e ${CL_YLW}" █████╗ ██╗  ████████╗ █████╗ ██╗██████╗     ██████╗  ██████╗ ███╗   ███╗"${CL_RST}
+	@echo -e ${CL_GRN}" █████╗ ██╗  ████████╗ █████╗ ██╗██████╗     ██████╗  ██████╗ ███╗   ███╗"${CL_RST}
 	@echo -e ${CL_GRN}"██╔══██╗██║  ╚══██╔══╝██╔══██╗██║██╔══██╗    ██╔══██╗██╔═══██╗████╗ ████║"${CL_RST}
 	@echo -e ${CL_GRN}"███████║██║     ██║   ███████║██║██████╔╝    ██████╔╝██║   ██║██╔████╔██║"${CL_RST}
 	@echo -e ${CL_GRN}"██╔══██║██║     ██║   ██╔══██║██║██╔══██╗    ██╔══██╗██║   ██║██║╚██╔╝██║"${CL_RST}
