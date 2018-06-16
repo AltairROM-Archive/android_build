@@ -1452,9 +1452,9 @@ class BlockDifference(object):
   def WriteScript(self, script, output_zip, progress=None):
     if not self.src:
       # write the output unconditionally
-      script.Print("Patching %s image unconditionally..." % (self.partition,))
+      script.Print("[*] Patching %s image unconditionally..." % (self.partition,))
     else:
-      script.Print("Patching %s image after verification." % (self.partition,))
+      script.Print("[*] Patching %s image after verification." % (self.partition,))
 
     if progress:
       script.ShowProgress(progress, 0)
@@ -1470,7 +1470,7 @@ class BlockDifference(object):
     verification."""
 
     partition = self.partition
-    script.Print("Verifying %s..." % (partition,))
+    script.Print("[*] Verifying %s..." % (partition,))
     ranges = self.tgt.care_map
     ranges_str = ranges.to_string_raw()
     script.AppendExtra('range_sha1("%s", "%s") == "%s" && '
@@ -1486,7 +1486,7 @@ class BlockDifference(object):
 
     # full OTA
     if not self.src:
-      script.Print("Image %s will be patched unconditionally." % (partition,))
+      script.Print("[*] Image %s will be patched unconditionally." % (partition,))
 
     # incremental OTA
     else:
@@ -1508,7 +1508,7 @@ class BlockDifference(object):
                           '"%s.new.dat", "%s.patch.dat")) then') % (
                           self.device, ranges_str, expected_sha1,
                           self.device, partition, partition, partition))
-      script.Print('Verified %s image...' % (partition,))
+      script.Print('[*] Verified %s image...' % (partition,))
       script.AppendExtra('else')
 
       if self.version >= 4:
@@ -1553,7 +1553,7 @@ class BlockDifference(object):
 
   def _WritePostInstallVerifyScript(self, script):
     partition = self.partition
-    script.Print('Verifying the updated %s image...' % (partition,))
+    script.Print('[*] Verifying the updated %s image...' % (partition,))
     # Unlike pre-install verification, clobbered_blocks should not be ignored.
     ranges = self.tgt.care_map
     ranges_str = ranges.to_string_raw()
@@ -1568,7 +1568,7 @@ class BlockDifference(object):
       script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' % (
                          self.device, ranges_str,
                          self._HashZeroBlocks(self.tgt.extended.size())))
-      script.Print('Verified the updated %s image.' % (partition,))
+      script.Print('[*] Verified the updated %s image.' % (partition,))
       if partition == "system":
         code = ErrorCode.SYSTEM_NONZERO_CONTENTS
       else:
@@ -1579,7 +1579,7 @@ class BlockDifference(object):
           'OTA update");\n'
           'endif;' % (code, partition))
     else:
-      script.Print('Verified the updated %s image.' % (partition,))
+      script.Print('[*] Verified the updated %s image.' % (partition,))
 
     if partition == "system":
       code = ErrorCode.SYSTEM_UNEXPECTED_CONTENTS
