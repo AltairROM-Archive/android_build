@@ -499,22 +499,23 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   script.Print(" ");
   script.Print(" ");
-  script.Print("******************************************");
-  script.Print("************                  ************");
-  script.Print("**********      ALTAIR ROM      **********");
-  script.Print("************                  ************");
-  script.Print("******************************************");
+  script.Print("           _   _______       _____ _____   ");
+  script.Print("     /\   | | |__   __|/\   |_   _|  __ \  ");
+  script.Print("    /  \  | |    | |  /  \    | | | |__) | ");
+  script.Print("   / /\ \ | |    | | / /\ \   | | |  _  /  ");
+  script.Print("  / ____ \| |____| |/ ____ \ _| |_| | \ \  ");
+  script.Print(" /_/    \_\______|_/_/    \_\_____|_|  \_\ ");
+  script.Print(" ");
+  script.Print("          Based on LineageOS 15.1");
+  script.Print("         Created by Martin Pollard");
+  script.Print(" ");
   builddate = GetBuildProp("ro.build.date", OPTIONS.info_dict)
-  script.Print("* Build date: %s"%(builddate));
+  script.Print(" Build date: %s"%(builddate));
   build = GetBuildProp("ro.lineage.display.version", OPTIONS.info_dict)
-  script.Print("*    Version: %s"%(build));
+  script.Print("    Version: %s"%(build));
   device = GetBuildProp("ro.product.device", OPTIONS.info_dict)
-  if GetBuildProp("ro.product.model", OPTIONS.info_dict) is not None:
-    model = GetBuildProp("ro.product.model", OPTIONS.info_dict)
-    script.Print("*     Device: %s (%s)"%(model, device));
-  else:
-    script.Print("*     Device: %s"%(device));
-  script.Print("******************************************");
+  script.Print("     Device: %s"%(device));
+  script.Print(" ");
 
   if OPTIONS.wipe_user_data:
     system_progress -= 0.1
