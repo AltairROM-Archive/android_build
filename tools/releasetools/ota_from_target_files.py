@@ -480,7 +480,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.Comment("Stage 3/3")
 
   # Dump fingerprints
-  script.Print("[*] Target: %s" % target_fp)
+  script.Print("Target: %s" % target_fp)
 
   script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
   device_specific.FullOTA_InstallBegin()
@@ -803,10 +803,10 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
     script.Comment("Stage 1/3")
 
   # Dump fingerprints
-  script.Print("[*] Source: %s" % (source_fp,))
-  script.Print("[*] Target: %s" % (target_fp,))
+  script.Print("Source: %s" % (source_fp,))
+  script.Print("Target: %s" % (target_fp,))
 
-  script.Print("[*] Verifying current system...")
+  script.Print("Verifying current system...")
 
   device_specific.IncrementalOTA_VerifyBegin()
 
@@ -908,14 +908,14 @@ else
     if updating_boot:
       if include_full_boot:
         print("boot image changed; including full.")
-        script.Print("[*] Installing boot image...")
+        script.Print("Installing boot image...")
         script.WriteRawImage("/boot", "boot.img")
       else:
         # Produce the boot image by applying a patch to the current
         # contents of the boot partition, and write it back to the
         # partition.
         print("boot image changed; including patch.")
-        script.Print("[*] Patching boot image...")
+        script.Print("Patching boot image...")
         script.ShowProgress(0.1, 10)
         script.ApplyPatch("%s:%s:%d:%s:%d:%s"
                           % (boot_type, boot_device,
@@ -934,7 +934,7 @@ else
     script.AppendExtra(OPTIONS.extra_script)
 
   if OPTIONS.wipe_user_data:
-    script.Print("[*] Erasing user data...")
+    script.Print("Erasing user data...")
     script.FormatPartition("/data")
     metadata["ota-wipe"] = "yes"
 
@@ -989,10 +989,10 @@ def WriteVerifyPackage(input_zip, output_zip):
 
   AppendAssertions(script, OPTIONS.info_dict, oem_dicts)
 
-  script.Print("[*] Verifying device images against %s..." % target_fp)
+  script.Print("Verifying device images against %s..." % target_fp)
   script.AppendExtra("")
 
-  script.Print("[*] Verifying boot...")
+  script.Print("Verifying boot...")
   boot_img = common.GetBootableImage(
       "boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
   boot_type, boot_device = common.GetTypeAndDevice(
@@ -1001,7 +1001,7 @@ def WriteVerifyPackage(input_zip, output_zip):
       boot_type, boot_device, boot_img.size, boot_img.sha1))
   script.AppendExtra("")
 
-  script.Print("[*] Verifying recovery...")
+  script.Print("Verifying recovery...")
   recovery_img = common.GetBootableImage(
       "recovery.img", "recovery.img", OPTIONS.input_tmp, "RECOVERY")
   recovery_type, recovery_device = common.GetTypeAndDevice(
