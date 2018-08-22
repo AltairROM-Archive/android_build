@@ -169,9 +169,9 @@ include $(BUILD_SYSTEM)/product.mk
 include $(BUILD_SYSTEM)/device.mk
 
 # A Lineage build needs only the Lineage product makefiles.
-ifneq ($(LINEAGE_BUILD),)
-  all_product_configs := $(shell find device -path "*/$(LINEAGE_BUILD)/altair.mk")
-  all_product_configs += $(wildcard vendor/altair/build/target/product/altair_$(LINEAGE_BUILD).mk)
+ifneq ($(ALTAIR_BUILD),)
+  all_product_configs := $(shell find device -path "*/$(ALTAIR_BUILD)/altair.mk")
+  all_product_configs += $(wildcard vendor/altair/build/target/product/altair_$(ALTAIR_BUILD).mk)
 else
   ifneq ($(strip $(TARGET_BUILD_APPS)),)
   # An unbundled app build needs only the core product makefiles.
@@ -182,9 +182,9 @@ else
   # files in the tree.
   all_product_configs := $(get-all-product-makefiles)
   endif # TARGET_BUILD_APPS
-endif # LINEAGE_BUILD
+endif # ALTAIR_BUILD
 
-ifeq ($(LINEAGE_BUILD),)
+ifeq ($(ALTAIR_BUILD),)
 all_named_products :=
 
 # Find the product config makefile for the current product.

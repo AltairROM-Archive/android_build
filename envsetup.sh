@@ -136,12 +136,12 @@ function check_product()
         return
     fi
     if (echo -n $1 | grep -q -e "^altair_") ; then
-        LINEAGE_BUILD=$(echo -n $1 | sed -e 's/^altair_//g')
-        export BUILD_NUMBER=$( (date +%s%N ; echo $LINEAGE_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10 )
+        ALTAIR_BUILD=$(echo -n $1 | sed -e 's/^altair_//g')
+        export BUILD_NUMBER=$( (date +%s%N ; echo $ALTAIR_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10 )
     else
-        LINEAGE_BUILD=
+        ALTAIR_BUILD=
     fi
-    export LINEAGE_BUILD
+    export ALTAIR_BUILD
 
         TARGET_PRODUCT=$1 \
         TARGET_BUILD_VARIANT= \
