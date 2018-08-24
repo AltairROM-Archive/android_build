@@ -511,7 +511,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.Print(" ");
   builddate = GetBuildProp("ro.build.date", OPTIONS.info_dict)
   script.Print(" Build date: %s"%(builddate));
-  build = GetBuildProp("ro.lineage.display.version", OPTIONS.info_dict)
+  build = GetBuildProp("ro.altair.display.version", OPTIONS.info_dict)
   script.Print("    Version: %s"%(build));
   device = GetBuildProp("ro.product.device", OPTIONS.info_dict)
   script.Print("     Device: %s"%(device));
