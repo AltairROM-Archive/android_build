@@ -840,6 +840,28 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   system_progress = 0.75
 
+  script.Print(" ");
+  script.Print(" ");
+  script.Print("===========================================");
+  script.Print("           _   _______       _____ _____   ");
+  script.Print("     /\   | | |__   __|/\   |_   _|  __ \  ");
+  script.Print("    /  \  | |    | |  /  \    | | | |__) | ");
+  script.Print("   / /\ \ | |    | | / /\ \   | | |  _  /  ");
+  script.Print("  / ____ \| |____| |/ ____ \ _| |_| | \ \  ");
+  script.Print(" /_/    \_\______|_/_/    \_\_____|_|  \_\ ");
+  script.Print(" ");
+  script.Print("          Based on LineageOS 16.0");
+  script.Print("         Created by Martin Pollard");
+  script.Print("===========================================");
+  script.Print(" ");
+  builddate = target_info.GetBuildProp("ro.build.date")
+  script.Print(" Build date: %s"%(builddate));
+  build = target_info.GetBuildProp("ro.altair.display.version")
+  script.Print("    Version: %s"%(build));
+  device = target_info.GetBuildProp("ro.product.device")
+  script.Print("     Device: %s"%(device));
+  script.Print(" ");
+
   if OPTIONS.wipe_user_data:
     system_progress -= 0.1
   if HasVendorPartition(input_zip):
