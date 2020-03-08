@@ -629,13 +629,13 @@ function lunch()
         # if we can't find a product, try to grab it off the CM github
         T=$(gettop)
         cd $T > /dev/null
-        vendor/altair/build/tools/roomservice.py $product
+        vendor/altair/build/tools/altair-roomservice.py $product
         cd - > /dev/null
         check_product $product
     else
         T=$(gettop)
         cd $T > /dev/null
-        vendor/altair/build/tools/roomservice.py $product true
+        vendor/altair/build/tools/altair-roomservice.py $product true
         cd - > /dev/null
     fi
     TARGET_PRODUCT=$product \
